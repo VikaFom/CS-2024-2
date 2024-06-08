@@ -1,5 +1,6 @@
 import socket
 from datetime import datetime
+from urllib.parse import unquote
 
 HOST = "127.0.0.1"
 PORT = 65432  # 1023 >
@@ -49,6 +50,20 @@ try:
             type_request, urn, _ = request_data.split("\r\n")[0].split(" ")
             print(type_request, urn)
 
+            try:
+                text = urn.strip('/').split('/')
+                if text[0] == 'hello':
+                    print ('Hello')
+                    response_body = 'Hello {name}!'.format(
+                        name =unquote(text[1]).capitalize()
+                    ) 
+                    response = response_ok.format(
+                        date=datetime.now(),
+                        length=len(response_body.encode()),
+                        body= response_body,
+                    )
+            except:
+                response = response_404
             try:
                 with open(urn.lstrip("//")) as file:
                     response_body = file.read()
